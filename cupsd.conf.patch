@@ -1,0 +1,58 @@
+--- cupsd.conf.orig	2021-01-08 19:11:08.000000000 +0000
++++ cupsd.conf	2021-01-08 19:42:13.500506545 +0000
+@@ -13,7 +13,7 @@
+ MaxLogSize 0
+ 
+ # Only listen for connections from the local machine.
+-Listen localhost:631
++Listen 0.0.0.0:631
+ Listen /run/cups/cups.sock
+ 
+ # Show shared printers on the local network.
+@@ -28,17 +28,22 @@
+ 
+ # Restrict access to the server...
+ <Location />
++  Allow All
+   Order allow,deny
+ </Location>
+ 
+ # Restrict access to the admin pages...
+ <Location /admin>
++  AuthType Default
++  Allow All
++  Require user @SYSTEM
+   Order allow,deny
+ </Location>
+ 
+ # Restrict access to configuration files...
+ <Location /admin/conf>
+   AuthType Default
++  Allow All
+   Require user @SYSTEM
+   Order allow,deny
+ </Location>
+@@ -46,6 +51,7 @@
+ # Restrict access to log files...
+ <Location /admin/log>
+   AuthType Default
++  Allow All
+   Require user @SYSTEM
+   Order allow,deny
+ </Location>
+@@ -54,7 +60,7 @@
+ <Policy default>
+   # Job/subscription privacy...
+   JobPrivateAccess default
+-  JobPrivateValues default
++  JobPrivateValues none
+   SubscriptionPrivateAccess default
+   SubscriptionPrivateValues default
+ 
+@@ -184,3 +190,6 @@
+     Order deny,allow
+   </Limit>
+ </Policy>
++
++ServerAlias *
++DefaultEncryption Never
