@@ -26,6 +26,6 @@ Docker image based on minideb including a CUPS server with Canon MF8050cn and De
 The CUPS web interface will be available at https://[IP]:631 using the CUPSADMIN/CUPSPASSWORD specified
 
 ## Inspiration
-Inspired by and based on https://github.com/RagingTiger/docker-cups-airprint
-* All praise should go to the original author
+Inspired by and based on https://github.com/quadportnick/docker-cups-airprint and https://github.com/tjfontaine/airprint-generate
+* All praise should go to the original author(s)
 * All complaints should be sent to me
