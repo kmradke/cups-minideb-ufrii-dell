@@ -1,5 +1,10 @@
-FROM bitnami/minideb:latest
-RUN install_packages curl diffutils patch unzip vim
+FROM bitnami/minideb:buster
+
+# Install cups, python3, inotify-tools, dependent libs
+RUN install_packages curl diffutils patch unzip vim cups printer-driver-all python3 python3-cups inotify-tools libxml2 libc6-i386 libxml2:i386 lib32z1 libjpeg62:i386 libstdc++6:i386
+
+# Dell drivers are 32-bit only
+RUN dpkg --add-architecture i386
 
 # Get custom drivers
 WORKDIR /tmp/deb
@@ -10,18 +15,8 @@ RUN curl -sSkLo dell.zip https://dl.dell.com/FOLDER03004762M/1/Printer_E310dw_Dr
   && unzip -j dell.zip '*.deb' \
   && rm dell.zip
 
-# Dell drivers are 32-bit only
-RUN dpkg --add-architecture i386
-
-# Install cups, python3, inotify-tools, dependent libs, custom drivers
-RUN install_packages cups printer-driver-all python3 python3-cups inotify-tools libxml2 libc6-i386 libxml2:i386 lib32z1 libjpeg62:i386 libstdc++6:i386 /tmp/deb/*.deb
-
-# CUPS uses port 631
-EXPOSE 631
-
-# Volume mounts
-VOLUME /config
-VOLUME /services
+# Install custom drivers
+RUN install_packages /tmp/deb/*.deb
 
 # Scripts
 ADD root /root
@@ -31,3 +26,10 @@ CMD ["/root/run_cups.sh"]
 # Patch files
 ADD cupsd.conf.patch /etc/cups
 RUN patch -b -i /etc/cups/cupsd.conf.patch /etc/cups/cupsd.conf
+
+# CUPS uses port 631
+EXPOSE 631
+
+# Volume mounts
+VOLUME /config
+VOLUME /services
